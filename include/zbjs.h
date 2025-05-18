@@ -2,6 +2,7 @@
 #include "zenv.h"
 #include "zbj.h"
 #include "utils.h"
+#include "zprop.h"
 
 class zbjs {
 private:
