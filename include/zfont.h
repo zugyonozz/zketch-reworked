@@ -2,19 +2,22 @@
 #include <unordered_map>
 #include "zenv.h"
 
-struct FontData{
-	Font font;
-	size_t size;
-}; using Fonts = std::unordered_map<std::string, FontData>;
+struct FontData {
+    Font font;
+    size_t size;
+}; 
 
-class zfont{
-	private:
-		Fonts fonts;
+using Fonts = std::unordered_map<std::string, FontData>;
 
-	public:
-		zfont();
-		bool loadFont(const std::string& name, size_t size, const std::string& path);
-		const Font getFont(const std::string& name, size_t size) const;
-		bool cleanUpFonts();
-		~zfont();
+class zfont {
+private:
+    Fonts fonts;
+
+public:
+    zfont();
+    ~zfont();
+    
+    bool loadFont(const std::string& name, size_t size, const std::string& path);
+    Font getFont(const std::string& name, size_t size) const;
+    bool cleanUpFonts();
 };

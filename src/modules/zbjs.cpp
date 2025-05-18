@@ -1,6 +1,6 @@
 #include "zbjs.h"
 
-zbjs::zbjs(Renderer& renderer, objProp props) : props(props) {
+zbjs::zbjs(Renderer& renderer, objProp& props) : props(props) {
 	zbj temp;
 	switch (props.type){
 		case objType::LINE : {
