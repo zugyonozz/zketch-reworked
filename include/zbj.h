@@ -13,13 +13,17 @@ private:
 
 public:
 	zbj() = default;
-    zbj(Transform& transform, Color& color);
+    zbj(const Transform& transform, const Color& color);
+	// Move constructor
+	zbj(zbj&& other) noexcept;
+	// Move assignment operator
+	zbj& operator=(zbj&& other) noexcept;
     ~zbj();
     
     // commons
-    bool draw(Renderer& renderer, FPoint& p1, FPoint& p2);
+    bool draw(Renderer& renderer, const FPoint& p1, const FPoint& p2);
     bool draw(Renderer& renderer, float radiusScale = 0.0f, bool fill = true);
-    bool draw(Renderer& renderer, Font font, const char* text, FPoint& pos);
+    bool draw(Renderer& renderer, Font font, const char* text, const FPoint& pos);
     bool draw(Renderer& renderer, const char* path);
 	bool draw(Renderer& renderer, std::vector<int>& indices, std::vector<Vertex>& vertices);
 	bool show(Renderer& renderer);

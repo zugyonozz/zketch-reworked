@@ -58,15 +58,3 @@ const std::unordered_map<std::string, Propvals>& objProp::getTemplateForType(obj
 	static const std::unordered_map<std::string, Propvals> empty;
 	return empty;
 }
-
-template<typename T>
-bool objProp::getProp(const std::string& key, T& outVal) const {
-	auto it = props.find(key);
-	if (it != props.end()) {
-		if (auto val = std::get_if<T>(&it->second)) {
-			outVal = *val;
-			return true;
-		}
-	}
-	return false;
-}

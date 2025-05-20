@@ -33,6 +33,6 @@ class Transform{
 		void setScale(float& nw, float& nh);
 
 		const FPoint& getPoint();
-		const FBound& getBound(bool RealBound = false);
+		const FBound getBound(bool RealBound = false);
 		const Anchor& getAnchor() const;
 };

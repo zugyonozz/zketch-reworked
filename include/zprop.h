@@ -18,3 +18,15 @@ struct objProp {
 	template<typename T>
 	bool getProp(const std::string& key, T& outVal) const;
 };
+
+template<typename T>
+bool objProp::getProp(const std::string& key, T& outVal) const {
+	auto it = props.find(key);
+	if (it != props.end()) {
+		if (auto val = std::get_if<T>(&it->second)) {
+			outVal = *val;
+			return true;
+		}
+	}
+	return false;
+}

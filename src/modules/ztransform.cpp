@@ -72,7 +72,7 @@ const FPoint& Transform::getPoint() {
 	return p;
 }
 
-const FBound& Transform::getBound(bool RealBound) {
+const FBound Transform::getBound(bool RealBound) {
 	CalculateTransform();
 	if(RealBound){
 		return b;

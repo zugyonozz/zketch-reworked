@@ -5,8 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Fungsi untuk mengkonversi karakter hex ke nilai integer
-inline int hexCharToInt(char c);
+int hexCharToInt(char c);
 
-// Fungsi untuk mengkonversi string hex ke SDL_Color
-inline Color Hex(const char* hex);
+Color Hex(const char* hex);

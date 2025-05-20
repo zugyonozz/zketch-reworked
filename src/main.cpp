@@ -1,7 +1,7 @@
 #include "zketch.h"
 using namespace std;
 
-zmain app = {"mySAQ", 1200, 900, SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED};
+zmain app("mySAQ", 1200, 900, SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED);
 zfont fonts;
 Event e;
 bool isRun = true;
@@ -23,13 +23,19 @@ void loadFonts(){
 int main(){
 	loadFonts();
 
-	objProp textProp = {objType::TEXT};
-	textProp.props["Text"] = "Hello World!";
-	textProp.props["Font"] = fonts.getFont("Montserrat-Medium", 24);
-	textProp.props["Color"] = "000000";
-	textProp.props["Position"] = FPoint{0.0f, 0.0f};
+	objProp textProp = {objType::RECT};
+	textProp.props["Boundary"] = FBound({200.0f, 200.0f, 100.0f, 100.0f});
+	textProp.props["Color"] = "FFF";
+	textProp.props["Roundness"] = 1.0f;
 
 	zbjs textObj(app.getRenderer(), textProp);
+
+	zbj obj = {Transform({0, 0, 100, 100}), Hex("#0000F0")};
+	obj.setAnchor(Anchor::ANCHOR_TOP_MID);
+	obj.draw(app.getRenderer());
+
+	zbj text = {Transform({100, 100, 0, 0}), Hex("FF00FF")};
+	text.draw(app.getRenderer(), fonts.getFont("Montserrat-Medium", 28), "Hello World", {100, 100});
 
 	while(isRun){
 		while(SDL_PollEvent(&e)){
@@ -39,10 +45,13 @@ int main(){
 		}
 		app.clearRender(Hex("000"));
 		textObj.show(app.getRenderer());
-		app.present();
+		// text.show(app.getRenderer());
+		// obj.show(app.getRenderer());
+		if(!app.present()){
+			std::cerr << "Error -> zmain::present couldn't show rendered\n";
+		}
 		app.delay(16);
 	}
 
-	app.stopTextInput();
 	return 0;
 }

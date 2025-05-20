@@ -20,6 +20,3 @@ using Vertex = SDL_Vertex;
 using Texture = SDL_Texture*;
 using Surface = SDL_Surface*;
 using Event = SDL_Event;
-
-using windowFlags = SDL_WindowFlags;
-using inputProperties = SDL_PropertiesID;

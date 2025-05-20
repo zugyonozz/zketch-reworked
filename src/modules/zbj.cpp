@@ -1,207 +1,366 @@
-#include "zbjs.h"
+#include "zbj.h"
 
-zbjs::zbjs(Renderer& renderer, objProp& props) : props(props) {
-    zbj temp;
-    switch (props.type) {
-        case objType::LINE: {
-            FPoint p1, p2;
-            std::string c;
-            if (!(props.getProp("xy1", p1) && 
-                props.getProp("xy2", p2) && 
-                props.getProp("Color", c))) {
-                std::cerr << "Error -> Could not parse LINE object. Make sure you have \n-\"xy1\", \n-\"xy2\", & \n-\"Color\" properties.\n";
-                break;
-            }
-            temp.setColor(Hex(c.c_str()));
-            temp.draw(renderer, p1, p2);
-            items.push_back(new zbj(temp));
-            break;
-        }
-        case objType::RECT: {
-            FBound b;
-            float r;
-            std::string c;
-            if (!(props.getProp("Boundary", b) && 
-                props.getProp("Color", c) && 
-                props.getProp("Roundness", r))) {
-                std::cerr << "Error -> Could not parse RECT object. Make sure you have \n-\"Boundary\", \n-\"Roundness\", & \n-\"Color\" properties.\n";
-                break;
-            }
-            temp.setColor(Hex(c.c_str()));
-            temp.setTransform(b);
-            temp.draw(renderer, r);
-            items.push_back(new zbj(temp));
-            break;
-        }
-        case objType::TEXT: {
-            FPoint p;
-            std::string c, t;
-            Font f;
-            if (!(props.getProp("Position", p) && 
-                props.getProp("Text", t) && 
-                props.getProp("Color", c) && 
-                props.getProp("Font", f))) {
-                std::cerr << "Error -> Could not parse TEXT object. Make sure you have: \n-\"Position\", \n-\"Text\", \n-\"Font\", & \n-\"Color\" properties.\n";
-                break;
-            }
-            temp.setColor(Hex(c.c_str()));
-            temp.draw(renderer, f, t.c_str(), p);
-            items.push_back(new zbj(temp));
-            break;
-        }
-        case objType::IMAGE: {
-            FPoint po;
-            std::string pa;
-            float s;
-            if (!(props.getProp("Path", pa) && 
-                props.getProp("Position", po) && 
-                props.getProp("Scale", s))) {
-                std::cerr << "Error -> Could not parse IMAGE object. Make sure you have \n-\"Path\", \n-\"Position\", & \n-\"Scale\" properties.\n";
-                break;
-            }
-            temp.draw(renderer, pa.c_str());
-            temp.setTransform(po);
-            temp.getTransform().setScale(s);
-            items.push_back(new zbj(temp));
-            break;
-        }
-        case objType::POLYGON: {
-            FPoint p;
-            std::vector<int> i;
-            std::vector<Vertex> v;
-            std::string c;
-            if (!(props.getProp("Vertices", v) && 
-                props.getProp("Position", p) && 
-                props.getProp("Indices", i) && 
-                props.getProp("Color", c))) {
-                std::cerr << "Error -> Could not parse POLYGON object. Make sure you have \n-\"Vertices\", \n-\"Position\", \n-\"Color\", & \n-\"Indices\" properties.\n";
-                break;
-            }
-            temp.draw(renderer, i, v);
-            temp.setColor(Hex(c.c_str()));
-            temp.setTransform(p);
-            items.push_back(new zbj(temp));
-            break;
-        }
-        case objType::BUTTON: {
-            FBound b;
-            float r;
-            std::string cb, ct, t;
-            FPoint p;
-            Font f;
-            if (!(props.getProp("Boundary", b) && 
-                props.getProp("Backgound", cb) && 
-                props.getProp("Roundness", r) && 
-                props.getProp("Position", p) && 
-                props.getProp("Text", t) && 
-                props.getProp("Color", ct) && 
-                props.getProp("Font", f))) {
-                std::cerr << "Error -> Could not parse BUTTON object. Make sure you have \n-\"Boundary\", \n-\"Roundness\", \n-\"Backgound\", \n-\"Position\", \n-\"Text\", \n-\"Font\", & \n-\"Color\" properties.\n";
-                break;
-            }
-            temp.setColor(Hex(cb.c_str()));
-            temp.setTransform(b);
-            temp.draw(renderer, r);
-            items.push_back(new zbj(temp));
-            
-            zbj textObj;
-            textObj.setColor(Hex(ct.c_str()));
-            textObj.draw(renderer, f, t.c_str(), p);
-            items.push_back(new zbj(textObj));
-            break;
-        }
-        case objType::INPUT: {
-            FBound b;
-            float r;
-            std::string cb, ct, t;
-            FPoint p;
-            Font f;
-            if (!(props.getProp("Boundary", b) && 
-                props.getProp("Backgound", cb) && 
-                props.getProp("Roundness", r) && 
-                props.getProp("Position", p) && 
-                props.getProp("Text", t) && 
-                props.getProp("Color", ct) && 
-                props.getProp("Font", f))) {
-                std::cerr << "Error -> Could not parse INPUT object. Make sure you have \n-\"Boundary\", \n-\"Roundness\", \n-\"Backgound\", \n-\"Position\", \n-\"Text\", \n-\"Font\", & \n-\"Color\" properties.\n";
-                break;
-            }
-            // Background
-            temp.setColor(Hex(cb.c_str()));
-            temp.setTransform(b);
-            temp.draw(renderer, r);
-            items.push_back(new zbj(temp));
-            
-            // Border
-            zbj borderObj;
-            borderObj.setColor(Hex(cb.c_str()));
-            borderObj.setTransform(b);
-            borderObj.draw(renderer, r, false);
-            items.push_back(new zbj(borderObj));
-            
-            // Text
-            zbj textObj;
-            textObj.setColor(Hex(ct.c_str()));
-            textObj.draw(renderer, f, t.c_str(), p);
-            items.push_back(new zbj(textObj));
-            break;
-        }
-        default:
-            std::cerr << "Error -> Invalid object type. Make sure you have a valid type.\n";
-            break;
+zbj::zbj(const Transform& transform, const Color& color) : transform(transform), color(color) {
+    texture = nullptr;
+}
+
+zbj::zbj(zbj&& other) noexcept
+	: transform(std::move(other.transform)),
+	color(std::move(other.color)),
+	texture(std::move(other.texture)) {
+		
+	}
+
+zbj& zbj::operator=(zbj&& other) noexcept {
+	if (this != &other) {
+		transform = std::move(other.transform);
+		color = std::move(other.color);
+		texture = std::move(other.texture);
+		// Reset other kalau perlu
+	}
+	return *this;
+}
+
+zbj::~zbj() {
+    if(texture) {
+        SDL_DestroyTexture(texture);
+        texture = nullptr;
     }
 }
 
-zbjs::~zbjs() {
-    for (auto& item : items) {
-        if (item) {
-            item->clear();
-            delete item;
-            item = nullptr;
+bool zbj::draw(Renderer& renderer, const FPoint& p1, const FPoint& p2) {
+    if (texture) { 
+        SDL_DestroyTexture(texture);
+        texture = nullptr;
+    }
+
+    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 
+                               static_cast<int>(transform.getBound().w), 
+                               static_cast<int>(transform.getBound().h));
+
+    if (!texture) { 
+        std::cerr << "Error -> Could not create texture : " << SDL_GetError() << "\n"; 
+        return false; 
+    }
+
+    Texture oldTarget = SDL_GetRenderTarget(renderer);
+    if (SDL_SetRenderTarget(renderer, texture) != 0) {
+        std::cerr << "Error -> Could not set render target : " << SDL_GetError() << "\n";
+        SDL_DestroyTexture(texture);
+        texture = nullptr;
+        return false;
+    }
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+    SDL_RenderClear(renderer);
+    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+    SDL_RenderLine(renderer, p1.x, p1.y, p2.x, p2.y);
+    SDL_SetRenderTarget(renderer, oldTarget);
+    return true;
+}
+
+bool zbj::draw(Renderer& renderer, float radiusScale, bool fill) {
+    if (texture) { 
+        SDL_DestroyTexture(texture);
+        texture = nullptr;
+    }
+
+    if(!fill) {
+        texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 
+                                   static_cast<int>(transform.getBound().w), 
+                                   static_cast<int>(transform.getBound().h));
+                                   
+        if (!texture) {
+            std::cerr << "Error -> Could not create texture : " << SDL_GetError() << "\n";
+            return false;
         }
+                                   
+        SDL_Texture* prevTarget = SDL_GetRenderTarget(renderer);
+        if (SDL_SetRenderTarget(renderer, texture) != 0) {
+            std::cerr << "Error -> Could not set render target : " << SDL_GetError() << "\n";
+            SDL_DestroyTexture(texture);
+            texture = nullptr;
+            return false;
+        }
+        
+        SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+        SDL_FRect rect = {0, 0, transform.getBound().w, transform.getBound().h};
+        SDL_RenderRect(renderer, &rect);
+        SDL_SetRenderTarget(renderer, prevTarget);
+        return true;
     }
-    items.clear();
-}
 
-void zbjs::addItem(Renderer& renderer, zbj& item) {
-    items.push_back(new zbj(item));
-}
-
-void zbjs::insertItem(Renderer& renderer, zbj& item, size_t& id) {
-    if (id >= items.size()) {
-        items.push_back(new zbj(item));
-    } else {
-        items.insert(items.begin() + id, new zbj(item));
+    if (radiusScale < 0.0f || radiusScale > 1.0f) { 
+        std::cerr << "Error -> Radius scale value must be between 0.0 and 1.0" << "\n"; 
+        return false; 
     }
-}
 
-void zbjs::removeItem(size_t& id) {
-    if (id >= items.size()) {
-        std::cerr << "Error -> Invalid id. Make sure you have a valid id.\n";
-        return;
+    if (radiusScale == 0.0f) {
+        Surface s = SDL_CreateSurface(static_cast<int>(transform.getBound().w), 
+                                     static_cast<int>(transform.getBound().h), 
+                                     SDL_PIXELFORMAT_RGBA32);
+                                     
+        if (!s) { 
+            std::cerr << "Error -> Could not create surface : " << SDL_GetError() << "\n"; 
+            return false; 
+        }
+        
+        const SDL_PixelFormatDetails* format = SDL_GetPixelFormatDetails(SDL_PIXELFORMAT_RGBA32);
+        if (!format) {
+            std::cerr << "Error -> Could not get pixel format details : " << SDL_GetError() << "\n";
+            SDL_DestroySurface(s);
+            return false;
+        }
+        
+        Uint32 pixel = SDL_MapRGBA(format, nullptr, color.r, color.g, color.b, color.a);
+        SDL_FillSurfaceRect(s, nullptr, pixel);
+        texture = SDL_CreateTextureFromSurface(renderer, s);
+        SDL_DestroySurface(s);
+
+        if (!texture) { 
+            std::cerr << "Error -> Could not create texture : " << SDL_GetError() << "\n"; 
+            return false; 
+        }
+        return true;
+    }
+
+    float minDimension = std::min(transform.getBound().w, transform.getBound().h);
+    float radius = minDimension * radiusScale * 0.5f;
+    Surface s = SDL_CreateSurface(static_cast<int>(transform.getBound().w), 
+                                 static_cast<int>(transform.getBound().h), 
+                                 SDL_PIXELFORMAT_RGBA32);
+
+    if (!s) { 
+        std::cerr << "Error -> Could not create surface : " << SDL_GetError() << "\n"; 
+        return false; 
+    }
+
+    const SDL_PixelFormatDetails* format = SDL_GetPixelFormatDetails(SDL_PIXELFORMAT_RGBA32);
+    if (!format) {
+        std::cerr << "Error -> Could not get pixel format details : " << SDL_GetError() << "\n";
+        SDL_DestroySurface(s);
+        return false;
     }
     
-    if (items[id]) {
-        items[id]->clear();
-        delete items[id];
-        items[id] = nullptr;
+    SDL_FillSurfaceRect(s, nullptr, SDL_MapRGBA(format, nullptr, 0, 0, 0, 0));
+
+    if (SDL_LockSurface(s) != 0) { 
+        std::cerr << "Error -> Failed to lock surface : " << SDL_GetError() << "\n"; 
+        SDL_DestroySurface(s); 
+        return false; 
     }
     
-    items.erase(items.begin() + id);
-}
-
-void zbjs::show(Renderer& renderer) {
-    for (auto& item : items) {
-        if (item) {
-            item->show(renderer);
+    Uint32 pixel = SDL_MapRGBA(format, nullptr, color.r, color.g, color.b, color.a);
+    
+    SDL_Rect inner1 = { 
+        static_cast<int>(radius), 
+        0, 
+        static_cast<int>(transform.getBound().w - 2 * radius), 
+        static_cast<int>(transform.getBound().h) 
+    };
+    
+    SDL_Rect inner2 = { 
+        0, 
+        static_cast<int>(radius), 
+        static_cast<int>(transform.getBound().w), 
+        static_cast<int>(transform.getBound().h - 2 * radius) 
+    };
+    
+    SDL_FillSurfaceRect(s, &inner1, pixel);
+    SDL_FillSurfaceRect(s, &inner2, pixel);
+    
+    auto drawCorner = [&](SDL_FPoint center, float startAngle) {
+        for (float angle = 0; angle <= 90.0f; angle += 0.5f) {
+            float rad = (startAngle + angle) * (M_PI / 180.0f);
+            for (float r = 0; r <= radius; r += 0.5f) {
+                int x = static_cast<int>(center.x + r * cosf(rad));
+                int y = static_cast<int>(center.y + r * sinf(rad));
+                if (x >= 0 && y >= 0 && x < s->w && y < s->h) {
+                    static_cast<Uint32*>(s->pixels)[y * s->w + x] = pixel;
+                }
+            }
         }
+    };
+    
+    drawCorner({radius, radius}, 180.0f);
+    drawCorner({static_cast<float>(transform.getBound().w) - radius, radius}, 270.0f);
+    drawCorner({static_cast<float>(transform.getBound().w) - radius, static_cast<float>(transform.getBound().h) - radius}, 0.0f);
+    drawCorner({radius, static_cast<float>(transform.getBound().h) - radius}, 90.0f);
+    
+    SDL_UnlockSurface(s);
+    texture = SDL_CreateTextureFromSurface(renderer, s);
+    SDL_DestroySurface(s);
+
+    if (!texture) { 
+        std::cerr << "Error -> Could not create rounded texture : " << SDL_GetError() << "\n"; 
+        return false; 
     }
+    return true;
 }
 
-const objProp& zbjs::getProps() const {
-    return props;
+bool zbj::draw(Renderer& renderer, Font font, const char* text, const FPoint& pos) {
+    if (texture) { 
+        SDL_DestroyTexture(texture);
+        texture = nullptr;
+    }
+
+    if (!font || !text) { 
+        std::cerr << "Error -> Invalid font or text!\n"; 
+        return false; 
+    }
+
+    size_t textLength = strlen(text);
+    if (textLength == 0) { 
+        std::cerr << "Error -> Empty text string!\n"; 
+        return false; 
+    }
+
+    Surface s = TTF_RenderText_Blended(font, text, textLength, color);
+
+    if (!s) { 
+        std::cerr << "Error -> Could not render text : " << SDL_GetError() << "\n";  
+        return false; 
+    }
+
+    texture = SDL_CreateTextureFromSurface(renderer, s);
+
+    if (!texture) { 
+        std::cerr << "Error -> Could not create texture from text : " << SDL_GetError() << "\n"; 
+        SDL_DestroySurface(s); 
+        return false; 
+    }
+
+    transform.setBound({pos.x, pos.y, static_cast<float>(s->w), static_cast<float>(s->h)});
+    SDL_DestroySurface(s);
+    return true;
 }
 
-const std::vector<zbj*>& zbjs::getItems() const {
-    return items;
+bool zbj::draw(Renderer& renderer, const char* path) {
+    if (texture) { 
+        SDL_DestroyTexture(texture);
+        texture = nullptr;
+    }
+
+    if (!path) {
+        std::cerr << "Error -> Invalid image path!\n"; 
+        return false; 
+    }
+
+    Surface s = IMG_Load(path);
+
+    if (!s) { 
+        std::cerr << "Error -> Could not load image : " << SDL_GetError() << "\n"; 
+        return false; 
+    }
+
+    texture = SDL_CreateTextureFromSurface(renderer, s);
+
+    if (!texture) { 
+        std::cerr << "Error -> Could not create texture from image : " << SDL_GetError() << "\n"; 
+        SDL_DestroySurface(s);
+        return false; 
+    }
+
+    transform.setBound({transform.getBound().x, transform.getBound().y, 
+                       static_cast<float>(s->w), static_cast<float>(s->h)});
+    SDL_DestroySurface(s);
+    return true;
+}
+
+bool zbj::draw(Renderer& renderer, std::vector<int>& indices, std::vector<Vertex>& vertices) {
+    if (texture) { 
+        SDL_DestroyTexture(texture);
+        texture = nullptr;
+    }
+
+    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
+                              static_cast<int>(transform.getBound().w),
+                              static_cast<int>(transform.getBound().h));
+                              
+    if (!texture) {
+        std::cerr << "Error -> Could not create texture : " << SDL_GetError() << "\n";
+        return false;
+    }
+    
+    Texture oldTarget = SDL_GetRenderTarget(renderer);
+    if (SDL_SetRenderTarget(renderer, texture) != 0) {
+        std::cerr << "Error -> Could not set render target : " << SDL_GetError() << "\n";
+        SDL_DestroyTexture(texture);
+        texture = nullptr;
+        return false;
+    }
+    
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+    SDL_RenderClear(renderer);
+    
+    if (SDL_RenderGeometry(renderer, nullptr, vertices.data(), vertices.size(), 
+                         indices.data(), indices.size()) != 0) {
+        std::cerr << "Error -> Could not draw geometry : " << SDL_GetError() << "\n";
+        SDL_SetRenderTarget(renderer, oldTarget);
+        SDL_DestroyTexture(texture);
+        texture = nullptr;
+        return false;
+    }
+    
+    SDL_SetRenderTarget(renderer, oldTarget);
+    return true;
+}
+
+bool zbj::show(Renderer& renderer) {
+	std::cerr << "zbj::show started\n";
+    if (!texture) { 
+        std::cerr << "Error -> No texture to show\n"; 
+        return false; 
+    }
+    
+    const FBound b = transform.getBound();
+    
+    if (!SDL_RenderTexture(renderer, texture, nullptr, &b)) {
+		std::cerr << "Error -> Bound : {" << b.x << ", " << b.y << ", " << b.w << ", " << b.h << "}\n" ;
+        std::cerr << "Error -> Failed to render texture : " << SDL_GetError() << "\n";
+        return false;
+    }
+    std::cerr << "zbj::show ended\n";
+    return true;
+}
+
+bool zbj::clear() {
+    if (!texture) {
+        return true; // Already cleared
+    }
+    
+    SDL_DestroyTexture(texture);
+    texture = nullptr;
+    transform = Transform();
+    color = {0, 0, 0, 0};
+    return true;
+}
+
+void zbj::setTransform(const FBound& newBound) { 
+    transform.setBound(newBound);
+}
+
+void zbj::setTransform(const FPoint& newPosition) {
+    transform.setPosition(newPosition);
+}
+
+void zbj::setColor(const Color& newColor) { 
+    color = newColor; 
+}
+
+void zbj::setAnchor(Anchor newAnchor) {
+    transform.setAnchor(newAnchor);
+}
+
+Transform& zbj::getTransform() {
+    return transform;
+}
+
+const Texture& zbj::getTexture() const {
+    return texture;
+}
+
+const Color& zbj::getColor() const {
+    return color;
 }

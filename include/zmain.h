@@ -2,6 +2,9 @@
 #pragma once
 #include "zenv.h"
 
+using windowFlags = SDL_WindowFlags;
+using inputProperties = SDL_PropertiesID;
+
 class zmain {
 private:
     Window window;
