@@ -8,12 +8,14 @@ const std::unordered_map<std::string, Propvals>& objProp::getTemplateForType(obj
 	static const std::unordered_map<objType, std::unordered_map<std::string, Propvals>> templates = {
 		{objType::RECT, {
 			{"Boundary", FBound{0.0f, 0.0f, 100.0f, 100.0f}},
-			{"Color", std::string("FFF")},
-			{"Roundness", 0.0f}
+			{"Background", std::string("FFF")},
+			{"Roundness", 0.0f},
+			{"Border ", 0.0f},
+			{"Border-Color", "FFF"}
 		}},
 		{objType::TEXT, {
 			{"Text", std::string("Hello")},
-			{"Font", Font(nullptr)},
+			{"Font", nullptr},
 			{"Color", std::string("FFF")},
 			{"Position", FPoint{}}
 		}},
@@ -28,28 +30,21 @@ const std::unordered_map<std::string, Propvals>& objProp::getTemplateForType(obj
 			{"xy2", FPoint{0.0f, 0.0f}}
 		}},
 		{objType::POLYGON, {
-			{"Color", std::string("FFF")},
+			{"Background", std::string("FFF")},
 			{"Vertices", std::vector<Vertex>{}},
 			{"Indices", std::vector<int>{}},
 			{"Position", FPoint{}}
 		}},
-		{objType::BUTTON, {
+		{objType::TEXTBOX, {
 			{"Boundary", FBound{0.0f, 0.0f, 100.0f, 100.0f}},
 			{"Roundness", 0.0f},
 			{"Background", std::string("FFF")},
+			{"Border", 0.0f},
+			{"Border-Color", "FFF"},
 			{"Text", std::string("Hello")},
-			{"Font", Font(nullptr)},
+			{"Font", nullptr},
 			{"Position", FPoint{}},
 			{"Color", std::string("F0F0F0")}
-		}},
-		{objType::INPUT, {
-			{"Boundary", FBound{0.0f, 0.0f, 100.0f, 100.0f}},
-			{"Roundness", 0.0f},
-			{"Background", std::string("FFF")},
-			{"Text", std::string("")},
-			{"Font", Font(nullptr)},
-			{"Position", FPoint{}},
-			{"Color", std::string("FFF")}
 		}}
 	};
 

@@ -22,11 +22,12 @@ public:
     
     // commons
     bool draw(Renderer& renderer, const FPoint& p1, const FPoint& p2);
-    bool draw(Renderer& renderer, float radiusScale = 0.0f, bool fill = true);
+    bool draw(Renderer& renderer, float radiusScale = 0.0f);
     bool draw(Renderer& renderer, Font font, const char* text, const FPoint& pos);
     bool draw(Renderer& renderer, const char* path);
 	bool draw(Renderer& renderer, std::vector<int>& indices, std::vector<Vertex>& vertices);
 	bool show(Renderer& renderer);
+	bool show(Renderer& renderer, FBound& srcRect);
 	bool clear();
     
     // setters

@@ -41,6 +41,7 @@ void Transform::CalculateTransform(){
 	}
 }
 
+Transform::Transform() : b({}), p({}), a(Anchor::ANCHOR_CENTER) {}
 Transform::Transform(FBound b) : b(b), p({}), a(Anchor::ANCHOR_CENTER) {}
 Transform::Transform(FBound b, Anchor a) : b(b), p({}), a(a) {}
 
@@ -62,7 +63,7 @@ void Transform::setScale(float& n){
 	b.h *= n;
 }
 
-void Transform::setScale(float& nw, float& nh){
+void Transform::setScale(float nw, float nh){
 	b.w *= nw;
 	b.h *= nh;
 }

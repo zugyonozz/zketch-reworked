@@ -4,7 +4,7 @@
 #include <variant>
 
 enum class objType{
-	LINE, RECT, IMAGE, TEXT, POLYGON, BUTTON, INPUT
+	LINE, RECT, IMAGE, TEXT, POLYGON, TEXTBOX
 };
 
 using Propvals = std::variant<float, std::string, std::vector<int>, std::vector<Vertex>, FBound, FPoint, Font>;

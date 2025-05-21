@@ -22,7 +22,7 @@ class Transform{
 		void CalculateTransform();
 
 	public:
-		Transform() = default;
+		Transform();
 		Transform(FBound b);
 		Transform(FBound b, Anchor a);
 
@@ -30,7 +30,7 @@ class Transform{
 		void setPosition(FPoint p);
 		void setAnchor(Anchor a);
 		void setScale(float& s);
-		void setScale(float& nw, float& nh);
+		void setScale(float nw, float nh);
 
 		const FPoint& getPoint();
 		const FBound getBound(bool RealBound = false);

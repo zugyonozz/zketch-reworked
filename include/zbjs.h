@@ -10,6 +10,13 @@ private:
     objProp props;
     std::vector<std::unique_ptr<zbj>> items;
 
+	void handleLine(Renderer& renderer, std::unique_ptr<zbj>& item);
+	void handleRect(Renderer& renderer, std::unique_ptr<zbj>& item);
+	void handleImage(Renderer& renderer, std::unique_ptr<zbj>& item);
+	void handleText(Renderer& renderer, std::unique_ptr<zbj>& item);
+	void handlePolygon(Renderer& renderer, std::unique_ptr<zbj>& item);
+	void handleTextBox(Renderer& renderer);
+
 public:
     zbjs(Renderer& renderer, objProp& props);
     ~zbjs();
@@ -18,6 +25,8 @@ public:
     void insertItem(Renderer& renderer, std::unique_ptr<zbj> item, size_t id);
     void removeItem(size_t id);
     void show(Renderer& renderer);
+	void showExclude(Renderer& renderer, size_t id);
+	void showExclude(Renderer& renderer, std::vector<size_t> id);
 
     const objProp& getProps() const;
     const std::vector<std::unique_ptr<zbj>>& getItems() const;
