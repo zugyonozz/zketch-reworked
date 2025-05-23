@@ -31,6 +31,7 @@ public:
 	bool clear();
     
     // setters
+	bool setOpacity(Uint8 a);
     void setTransform(const FBound& newBound);
 	void setTransform(const FPoint& newPosition);
     void setColor(const Color& newColor);

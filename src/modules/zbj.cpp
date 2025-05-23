@@ -283,7 +283,10 @@ bool zbj::draw(Renderer& renderer, std::vector<int>& indices, std::vector<Vertex
 }
 
 bool zbj::show(Renderer& renderer) {
-	std::cerr << "zbj::show started\n";
+	if(color.a < 255){ 
+		setOpacity(color.a); 
+		SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+	}
     if (!texture) { 
         std::cerr << "Error -> No texture to show\n"; 
         return false; 
@@ -296,12 +299,11 @@ bool zbj::show(Renderer& renderer) {
         std::cerr << "Error -> Failed to render texture : " << SDL_GetError() << "\n";
         return false;
     }
-    std::cerr << "zbj::show ended\n";
     return true;
 }
 
 bool zbj::show(Renderer& renderer, FBound& srcRect) {
-	std::cerr << "zbj::show started\n";
+	if(color.a < 255){ setOpacity(color.a); }
     if (!texture) { 
         std::cerr << "Error -> No texture to show\n"; 
         return false; 
@@ -314,7 +316,6 @@ bool zbj::show(Renderer& renderer, FBound& srcRect) {
         std::cerr << "Error -> Failed to render texture : " << SDL_GetError() << "\n";
         return false;
     }
-    std::cerr << "zbj::show ended\n";
     return true;
 }
 
@@ -328,6 +329,14 @@ bool zbj::clear() {
     transform = Transform();
     color = {0, 0, 0, 0};
     return true;
+}
+
+bool zbj::setOpacity(Uint8 a){
+	if(!SDL_SetTextureAlphaMod(texture, a)){
+		std::cerr << "Error -> zbj::setOpacity : " << SDL_GetError() << "\n";
+		return false;
+	}
+	return true;
 }
 
 void zbj::setTransform(const FBound& newBound) { 

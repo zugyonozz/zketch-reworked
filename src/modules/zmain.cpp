@@ -55,12 +55,12 @@ bool zmain::present() {
     return SDL_RenderPresent(renderer);
 }
 
-Point zmain::getWinSize() const {
+const FPoint zmain::getWinSize() const {
     Point p{0, 0};
     if (window) {
         SDL_GetWindowSize(window, &p.x, &p.y);
     }
-    return p;
+    return {(float)p.x, (float)p.y};
 }
 
 Renderer& zmain::getRenderer() {

@@ -6,5 +6,8 @@
 #include <string.h>
 
 int hexCharToInt(char c);
-
 Color Hex(const char* hex);
+FPoint Point2FPoint(Point& p);
+Point FPoint2Point(FPoint& p);
+FBound Bound2FBound(Bound& b);
+Bound FBound2Bound(FBound& b);

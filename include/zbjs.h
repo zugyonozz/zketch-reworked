@@ -10,11 +10,11 @@ private:
     objProp props;
     std::vector<std::unique_ptr<zbj>> items;
 
-	void handleLine(Renderer& renderer, std::unique_ptr<zbj>& item);
-	void handleRect(Renderer& renderer, std::unique_ptr<zbj>& item);
-	void handleImage(Renderer& renderer, std::unique_ptr<zbj>& item);
-	void handleText(Renderer& renderer, std::unique_ptr<zbj>& item);
-	void handlePolygon(Renderer& renderer, std::unique_ptr<zbj>& item);
+	void handleLine(Renderer& renderer);
+	void handleRect(Renderer& renderer);
+	void handleImage(Renderer& renderer);
+	void handleText(Renderer& renderer);
+	void handlePolygon(Renderer& renderer);
 	void handleTextBox(Renderer& renderer);
 
 public:

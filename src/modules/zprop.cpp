@@ -10,8 +10,8 @@ const std::unordered_map<std::string, Propvals>& objProp::getTemplateForType(obj
 			{"Boundary", FBound{0.0f, 0.0f, 100.0f, 100.0f}},
 			{"Background", std::string("FFF")},
 			{"Roundness", 0.0f},
-			{"Border ", 0.0f},
-			{"Border-Color", "FFF"}
+			{"Border", 0.0f},
+			{"Border-Color", std::string("FFF")},
 		}},
 		{objType::TEXT, {
 			{"Text", std::string("Hello")},

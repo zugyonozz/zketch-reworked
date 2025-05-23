@@ -44,3 +44,31 @@ Color Hex(const char* hex) {
     }
     return color;
 }
+
+FPoint Point2FPoint(Point& p) {
+	return FPoint{
+		(float)p.x, 
+		(float)p.y};
+}
+
+Point FPoint2Point(FPoint& p) {
+	return Point{
+		(int)p.x, 
+		(int)p.y};
+}
+
+FBound Bound2FBound(Bound& b) {
+	return FBound{
+		(float)b.x, 
+		(float)b.y, 
+		(float)b.w, 
+		(float)b.h};
+}
+
+Bound FBound2Bound(FBound& b) {
+	return Bound{
+		(int)b.x, 
+		(int)b.y, 
+		(int)b.w, 
+		(int)b.h};
+}

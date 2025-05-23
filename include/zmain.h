@@ -19,7 +19,7 @@ public:
     zmain(const std::string& title, int W, int H, windowFlags flags);
     zmain(const std::string& title, int W, int H, windowFlags flags, const char* driver);
 
-    Point getWinSize() const;
+    const FPoint getWinSize() const;
     Renderer& getRenderer();
     
     bool present();

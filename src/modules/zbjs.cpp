@@ -1,6 +1,7 @@
 #include "zbjs.h"
 
-void zbjs::handleLine(Renderer& renderer, std::unique_ptr<zbj>& item){
+void zbjs::handleLine(Renderer& renderer){
+	auto temp = std::make_unique<zbj>();
 	FPoint p1, p2; std::string c;
 	if(!(props.getProp("xy1", p1) 
 		&& props.getProp("xy2", p2) 
@@ -8,12 +9,13 @@ void zbjs::handleLine(Renderer& renderer, std::unique_ptr<zbj>& item){
 			std::cerr << "Error -> Could not parse LINE object. Make sure you have \n-\"xy1\", \n-\"xy2\", & \n-\"Color\" properties.\n";
 			return;
 	}
-	item->setColor(Hex(c.c_str()));
-	item->draw(renderer, p1, p2);
-	items.emplace_back(std::move(item));
+	temp->setColor(Hex(c.c_str()));
+	temp->draw(renderer, p1, p2);
+	items.emplace_back(std::move(temp));
 }
 
-void zbjs::handleRect(Renderer& renderer, std::unique_ptr<zbj>& item){
+void zbjs::handleRect(Renderer& renderer){
+	auto temp = std::make_unique<zbj>();
 	FBound b; float r, w; std::string c, cb;
 	if(!(props.getProp("Boundary", b) 
 	&& props.getProp("Background", c) 
@@ -23,24 +25,23 @@ void zbjs::handleRect(Renderer& renderer, std::unique_ptr<zbj>& item){
 		std::cerr << "Error -> Could not parse RECT object. Make sure you have \n-\"Boundary\", \n-\"Roundness\", \"Border\", \"Border-Color\", & \n-\"Background\" properties.\n";
 		return;
 	}
+	if(w < 0.0f){ std::cerr << "Error -> Invalid border thickness value!\n"; return; }
 	if(w != 0.0f && w > 0.0f){
-		auto tmp2 = std::make_unique<zbj>();
-		tmp2->setColor(Hex(cb.c_str()));
-		tmp2->setTransform(b);
-		tmp2->getTransform().setScale((b.w + w * 2) / b.w, (b.h + w * 2) / b.h);
-		tmp2->draw(renderer, r);
-		items.emplace_back(std::move(tmp2));
+		auto temp2 = std::make_unique<zbj>();
+		temp2->setColor(Hex(cb.c_str()));
+		temp2->setTransform(b);
+		temp2->getTransform().setScale((b.w + w * 2) / b.w, (b.h + w * 2) / b.h);
+		temp2->draw(renderer, r);
+		items.emplace_back(std::move(temp2));
 	}
-	if(w < 0.0f){
-		std::cerr << "Error -> Invalid border thickness value!\n";
-		return;
-	}
-	item->setColor(Hex(c.c_str()));
-	item->setTransform(b);
-	items.emplace_back(std::move(item));
+	temp->setColor(Hex(c.c_str()));
+	temp->setTransform(b);
+	temp->draw(renderer, r);
+	items.emplace_back(std::move(temp));
 }
 
-void zbjs::handleText(Renderer& renderer, std::unique_ptr<zbj>& item){
+void zbjs::handleText(Renderer& renderer){
+	auto temp = std::make_unique<zbj>();
 	FPoint p; std::string c, t; Font f;
 	if(!(props.getProp("Position", p) 
 	&& props.getProp("Text", t) 
@@ -49,12 +50,13 @@ void zbjs::handleText(Renderer& renderer, std::unique_ptr<zbj>& item){
 		std::cerr << "Error -> Could not parse TEXT object. Make sure you have: \n-\"Position\", \n-\"Text\", \n-\"Font\", & \n-\"Color\" properties.\n";
 		return;
 	}
-	item->setColor(Hex(c.c_str()));
-	item->draw(renderer, f, t.c_str(), p);
-	items.emplace_back(std::move(item));
+	temp->setColor(Hex(c.c_str()));
+	temp->draw(renderer, f, t.c_str(), p);
+	items.emplace_back(std::move(temp));
 }
 
-void zbjs::handleImage(Renderer& renderer, std::unique_ptr<zbj>& item){
+void zbjs::handleImage(Renderer& renderer){
+	auto temp = std::make_unique<zbj>();
 	FPoint po; std::string pa; float s;
 	if(!(props.getProp("Path", pa) 
 	&& props.getProp("Position", po) 
@@ -62,13 +64,14 @@ void zbjs::handleImage(Renderer& renderer, std::unique_ptr<zbj>& item){
 		std::cerr << "Error -> Could not parse IMAGE object. Make sure you have \n-\"Path\", \n-\"Position\", & \n-\"Scale\" properties.\n";
 		return;
 	}
-	item->draw(renderer, pa.c_str());
-	item->setTransform(po);
-	item->getTransform().setScale(s);
-	items.emplace_back(std::move(item));
+	temp->draw(renderer, pa.c_str());
+	temp->setTransform(po);
+	temp->getTransform().setScale(s);
+	items.emplace_back(std::move(temp));
 }
 
-void zbjs::handlePolygon(Renderer& renderer, std::unique_ptr<zbj>& item){
+void zbjs::handlePolygon(Renderer& renderer){
+	auto temp = std::make_unique<zbj>();
 	FPoint p; std::vector<int> i; std::vector<Vertex> v; std::string c;
 	if(!(props.getProp("Vertices", v) 
 	&& props.getProp("Position", p) 
@@ -77,28 +80,26 @@ void zbjs::handlePolygon(Renderer& renderer, std::unique_ptr<zbj>& item){
 		std::cerr << "Error -> Could not parse POLYGON object. Make sure you have \n-\"Vertices\", \n-\"Position\", \n-\"Color\", & \n-\"Indices\" properties.\n";
 		return;
 	}
-	item->draw(renderer, i, v);
-	item->setColor(Hex(c.c_str()));
-	item->setTransform(p);
-	items.emplace_back(std::move(item));
+	temp->draw(renderer, i, v);
+	temp->setColor(Hex(c.c_str()));
+	temp->setTransform(p);
+	items.emplace_back(std::move(temp));
 }
 
 void zbjs::handleTextBox(Renderer& renderer){
-	auto item = std::make_unique<zbj>();
-	handleRect(renderer, item);
+	handleRect(renderer);
 	// TEXT
-	auto tx = std::make_unique<zbj>();
-	handleText(renderer, tx);
+	handleText(renderer);
 }
 
 zbjs::zbjs(Renderer& renderer, objProp& props) : props(props) {
 	auto temp = std::make_unique<zbj>();
 	switch (props.type){
-		case objType::LINE : handleLine(renderer, temp); break;
-		case objType::RECT : handleRect(renderer, temp); break;
-		case objType::TEXT : handleText(renderer, temp); break;
-		case objType::IMAGE: handleImage(renderer, temp); break;
-		case objType::POLYGON: handlePolygon(renderer, temp); break;
+		case objType::LINE : handleLine(renderer); break;
+		case objType::RECT : handleRect(renderer); break;
+		case objType::TEXT : handleText(renderer); break;
+		case objType::IMAGE: handleImage(renderer); break;
+		case objType::POLYGON: handlePolygon(renderer); break;
 		case objType::TEXTBOX: handleTextBox(renderer); break;
 		default:
 			std::cerr << "Error -> invalid object type. Make sure you have a valid type.\n";
@@ -167,7 +168,7 @@ void zbjs::showExclude(Renderer& renderer, std::vector<size_t> id){
 			std::cerr << "Error -> Could not show objects, item null.\n";
 			return;
 		}
-		for(int j = 0; j < id.size(); j++){
+		for(size_t j = 0; j < id.size(); j++){
 			if(i == id[j]){
 				show = false;
 				break;
