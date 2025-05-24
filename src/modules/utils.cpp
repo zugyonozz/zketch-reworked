@@ -1,4 +1,8 @@
+// utils.cpp
 #include "utils.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 // Fungsi untuk mengkonversi karakter hex ke nilai integer
 int hexCharToInt(char c) {
@@ -48,13 +52,15 @@ Color Hex(const char* hex) {
 FPoint Point2FPoint(Point& p) {
 	return FPoint{
 		(float)p.x, 
-		(float)p.y};
+		(float)p.y
+	};
 }
 
 Point FPoint2Point(FPoint& p) {
 	return Point{
 		(int)p.x, 
-		(int)p.y};
+		(int)p.y
+	};
 }
 
 FBound Bound2FBound(Bound& b) {
@@ -62,7 +68,8 @@ FBound Bound2FBound(Bound& b) {
 		(float)b.x, 
 		(float)b.y, 
 		(float)b.w, 
-		(float)b.h};
+		(float)b.h
+	};
 }
 
 Bound FBound2Bound(FBound& b) {
@@ -70,5 +77,27 @@ Bound FBound2Bound(FBound& b) {
 		(int)b.x, 
 		(int)b.y, 
 		(int)b.w, 
-		(int)b.h};
+		(int)b.h
+	};
+}
+
+FPoint getMousePos(){
+	FPoint coord;
+	SDL_PumpEvents();
+	SDL_GetMouseState(&coord.x, &coord.y);
+	return coord;
+}
+
+bool isHover(Bound b){
+	FPoint coord = getMousePos();
+	if(coord.x >= b.x && coord.x <= b.x + b.w && coord.y >= b.y && coord.y <= b.y + b.h){
+		return true;
+	}
+	return false;
+}
+
+bool isOnClick(const Event& e, Bound b) {
+    int mx = e.button.x;
+    int my = e.button.y;
+    return (mx >= b.x && mx <= b.x + b.w && my >= b.y && my <= b.y + b.h);
 }

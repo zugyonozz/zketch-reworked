@@ -1,11 +1,15 @@
 #include "zbjs.h"
+#include "zbj.h"
+#include "utils.h"
+#include "zprop.h"
+#include <iostream>
 
 void zbjs::handleLine(Renderer& renderer){
 	auto temp = std::make_unique<zbj>();
 	FPoint p1, p2; std::string c;
-	if(!(props.getProp("xy1", p1) 
-		&& props.getProp("xy2", p2) 
-		&& props.getProp("Color", c))){
+	if(!(props->getProp("xy1", p1) 
+		&& props->getProp("xy2", p2) 
+		&& props->getProp("Color", c))){
 			std::cerr << "Error -> Could not parse LINE object. Make sure you have \n-\"xy1\", \n-\"xy2\", & \n-\"Color\" properties.\n";
 			return;
 	}
@@ -17,11 +21,11 @@ void zbjs::handleLine(Renderer& renderer){
 void zbjs::handleRect(Renderer& renderer){
 	auto temp = std::make_unique<zbj>();
 	FBound b; float r, w; std::string c, cb;
-	if(!(props.getProp("Boundary", b) 
-	&& props.getProp("Background", c) 
-	&& props.getProp("Roundness", r)
-	&& props.getProp("Border", w)
-	&& props.getProp("Border-Color", cb))){
+	if(!(props->getProp("Boundary", b) 
+	&& props->getProp("Background", c) 
+	&& props->getProp("Roundness", r)
+	&& props->getProp("Border", w)
+	&& props->getProp("Border-Color", cb))){
 		std::cerr << "Error -> Could not parse RECT object. Make sure you have \n-\"Boundary\", \n-\"Roundness\", \"Border\", \"Border-Color\", & \n-\"Background\" properties.\n";
 		return;
 	}
@@ -43,10 +47,10 @@ void zbjs::handleRect(Renderer& renderer){
 void zbjs::handleText(Renderer& renderer){
 	auto temp = std::make_unique<zbj>();
 	FPoint p; std::string c, t; Font f;
-	if(!(props.getProp("Position", p) 
-	&& props.getProp("Text", t) 
-	&& props.getProp("Color", c) 
-	&& props.getProp("Font", f))){
+	if(!(props->getProp("Position", p) 
+	&& props->getProp("Text", t) 
+	&& props->getProp("Color", c) 
+	&& props->getProp("Font", f))){
 		std::cerr << "Error -> Could not parse TEXT object. Make sure you have: \n-\"Position\", \n-\"Text\", \n-\"Font\", & \n-\"Color\" properties.\n";
 		return;
 	}
@@ -58,9 +62,9 @@ void zbjs::handleText(Renderer& renderer){
 void zbjs::handleImage(Renderer& renderer){
 	auto temp = std::make_unique<zbj>();
 	FPoint po; std::string pa; float s;
-	if(!(props.getProp("Path", pa) 
-	&& props.getProp("Position", po) 
-	&& props.getProp("Scale", s))){
+	if(!(props->getProp("Path", pa) 
+	&& props->getProp("Position", po) 
+	&& props->getProp("Scale", s))){
 		std::cerr << "Error -> Could not parse IMAGE object. Make sure you have \n-\"Path\", \n-\"Position\", & \n-\"Scale\" properties.\n";
 		return;
 	}
@@ -73,10 +77,10 @@ void zbjs::handleImage(Renderer& renderer){
 void zbjs::handlePolygon(Renderer& renderer){
 	auto temp = std::make_unique<zbj>();
 	FPoint p; std::vector<int> i; std::vector<Vertex> v; std::string c;
-	if(!(props.getProp("Vertices", v) 
-	&& props.getProp("Position", p) 
-	&& props.getProp("Indices", i)
-	&& props.getProp("Color", c))){
+	if(!(props->getProp("Vertices", v) 
+	&& props->getProp("Position", p) 
+	&& props->getProp("Indices", i)
+	&& props->getProp("Color", c))){
 		std::cerr << "Error -> Could not parse POLYGON object. Make sure you have \n-\"Vertices\", \n-\"Position\", \n-\"Color\", & \n-\"Indices\" properties.\n";
 		return;
 	}
@@ -92,9 +96,9 @@ void zbjs::handleTextBox(Renderer& renderer){
 	handleText(renderer);
 }
 
-zbjs::zbjs(Renderer& renderer, objProp& props) : props(props) {
+zbjs::zbjs(Renderer& renderer, std::unique_ptr<objProp> props) : props(std::move(props)) {
 	auto temp = std::make_unique<zbj>();
-	switch (props.type){
+	switch (props->getType()){
 		case objType::LINE : handleLine(renderer); break;
 		case objType::RECT : handleRect(renderer); break;
 		case objType::TEXT : handleText(renderer); break;
@@ -191,7 +195,7 @@ void zbjs::removeItem(size_t id) {
 
 
 const objProp& zbjs::getProps() const{
-	return props;
+	return *props;
 }
 
 const std::vector<std::unique_ptr<zbj>>& zbjs::getItems() const {

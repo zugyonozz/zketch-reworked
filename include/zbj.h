@@ -1,9 +1,8 @@
 // zbj.h
 #pragma once
 #define _USE_MATH_DEFINES
-#include <cmath>
-#include "zenv.h"
 #include "ztransform.h"
+#include "zfont.h"
 
 class zbj {
 private:

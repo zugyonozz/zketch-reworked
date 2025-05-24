@@ -1,15 +1,16 @@
 # Compiler dan flags
 CXX := g++
-CXXFLAGS := -std=c++17 -Wall -Iinclude -Iinclude/SDL3
+CXXFLAGS := -std=c++17 -Wall -Iinclude -Iinclude/SDL3 -Iinclude/PAGES
 
 # Direktori
 SRC_DIR := src
 MODULES_DIR := src/modules
+PAGES_DIR := src/pages
 OBJ_DIR := build
 BIN := bin/zketch.exe
 
 # File sumber dan object
-SOURCES := $(wildcard $(SRC_DIR)/*.cpp) $(wildcard $(MODULES_DIR)/*.cpp)
+SOURCES := $(wildcard $(SRC_DIR)/*.cpp) $(wildcard $(MODULES_DIR)/*.cpp) $(wildcard $(PAGES_DIR)/*.cpp)
 OBJECTS := $(patsubst %.cpp, $(OBJ_DIR)/%.o, $(SOURCES))
 
 # Library

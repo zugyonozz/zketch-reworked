@@ -1,9 +1,7 @@
 // zmain.h
 #pragma once
-#include "zenv.h"
-
-using windowFlags = SDL_WindowFlags;
-using inputProperties = SDL_PropertiesID;
+#include "ztype.h"
+#include <string>
 
 class zmain {
 private:
@@ -25,10 +23,12 @@ public:
     bool present();
     bool clearRender(const Color& color);
     void delay(Uint32 ms);
-    bool setWindowIcon(const char* path);
-    bool startTextInput();
+	bool startTextInput();
     bool startTextInput(const inputProperties& props);
     bool stopTextInput();
+
+    bool setWindowIcon(const char* path);
+	bool setWindowMinSize(const int& W, const int& H);
     
     ~zmain();
 };

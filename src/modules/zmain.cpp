@@ -1,4 +1,6 @@
 #include "zmain.h"
+#include <iostream>
+#include <SDL3/SDL_image.h>
 
 zmain::zmain() : window(nullptr), renderer(nullptr) {}
 
@@ -41,13 +43,6 @@ bool zmain::init() {
         std::cerr << "Error -> Could not initialize SDL: " << SDL_GetError() << "\n";
         return false;
     }
-    
-    if (!TTF_Init()) {
-        std::cerr << "Error -> Could not initialize TTF: " << SDL_GetError() << "\n";
-        SDL_Quit();
-        return false;
-    }
-    
     return true;
 }
 
@@ -101,6 +96,14 @@ bool zmain::setWindowIcon(const char* path) {
     return true;
 }
 
+bool zmain::setWindowMinSize(const int& W, const int& H){
+	if(!SDL_SetWindowMinimumSize(window, W, H)){
+		std::cerr << "Error : zmain::setWindowMinSize failed!\n";
+		return false;
+	}
+	return true;
+}
+
 bool zmain::startTextInput() {
     if (!SDL_StartTextInput(window)) {
         std::cerr << "Error: Could not start text input: " << SDL_GetError() << "\n";
@@ -134,6 +137,5 @@ zmain::~zmain() {
         SDL_DestroyWindow(window);
         window = nullptr;
     }
-    TTF_Quit();
     SDL_Quit();
 }

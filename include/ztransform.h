@@ -1,5 +1,5 @@
 #pragma once
-#include "zenv.h"
+#include "ztype.h"
 
 enum class Anchor {
     ANCHOR_TOP_LEFT,
@@ -32,7 +32,7 @@ class Transform{
 		void setScale(float& s);
 		void setScale(float nw, float nh);
 
-		const FPoint& getPoint();
+		const FPoint getPoint();
 		const FBound getBound(bool RealBound = false);
-		const Anchor& getAnchor() const;
+		const Anchor getAnchor() const;
 };

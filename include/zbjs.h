@@ -1,13 +1,14 @@
 #pragma once
 #include <memory>
-#include "zenv.h"
-#include "zbj.h"
-#include "utils.h"
-#include "zprop.h"
+#include <vector>
+#include "ztype.h"
+
+class objProp;
+class zbj;
 
 class zbjs {
 private:
-    objProp props;
+    std::unique_ptr<objProp> props;
     std::vector<std::unique_ptr<zbj>> items;
 
 	void handleLine(Renderer& renderer);
@@ -18,7 +19,7 @@ private:
 	void handleTextBox(Renderer& renderer);
 
 public:
-    zbjs(Renderer& renderer, objProp& props);
+    zbjs(Renderer& renderer, std::unique_ptr<objProp> props);
     ~zbjs();
 
     void addItem(Renderer& renderer, zbj&& item);
