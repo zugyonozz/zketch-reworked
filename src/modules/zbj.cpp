@@ -1,6 +1,7 @@
+// zbj.h
 #include "zbj.h"
 #include "ztype.h"
-#include "SDL3/SDL_image.h"
+#include "SDL_image.h"
 #include <vector>
 #include <cmath>
 #include <iostream>

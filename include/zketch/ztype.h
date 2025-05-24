@@ -1,6 +1,6 @@
 // types.h
 #pragma once
-#include <SDL3/SDL.h>
+#include "SDL.h"
 
 // object properties
 using Bound = SDL_Rect;

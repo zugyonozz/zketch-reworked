@@ -1,6 +1,7 @@
+// zmain.cpp
 #include "zmain.h"
+#include "SDL_image.h"
 #include <iostream>
-#include <SDL3/SDL_image.h>
 
 zmain::zmain() : window(nullptr), renderer(nullptr) {}
 

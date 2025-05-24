@@ -1,3 +1,4 @@
+// zbjs.cpp
 #include "zbjs.h"
 #include "zbj.h"
 #include "utils.h"
@@ -97,8 +98,7 @@ void zbjs::handleTextBox(Renderer& renderer){
 }
 
 zbjs::zbjs(Renderer& renderer, std::unique_ptr<objProp> props) : props(std::move(props)) {
-	auto temp = std::make_unique<zbj>();
-	switch (props->getType()){
+	switch (this->props->getType()){
 		case objType::LINE : handleLine(renderer); break;
 		case objType::RECT : handleRect(renderer); break;
 		case objType::TEXT : handleText(renderer); break;
