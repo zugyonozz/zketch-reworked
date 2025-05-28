@@ -1,7 +1,6 @@
 // zmain.h
 #pragma once
 #include "ztype.h"
-#include <string>
 
 class zmain {
 private:
@@ -14,8 +13,8 @@ private:
 
 public:
     zmain();
-    zmain(const std::string& title, int W, int H, windowFlags flags);
-    zmain(const std::string& title, int W, int H, windowFlags flags, const char* driver);
+    zmain(const char* title, int W, int H, windowFlags flags);
+    zmain(const char* title, int W, int H, windowFlags flags, const char* driver);
 
     const FPoint getWinSize() const;
     Renderer& getRenderer();

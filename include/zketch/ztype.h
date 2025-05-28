@@ -12,6 +12,7 @@ using windowFlags = SDL_WindowFlags;
 using inputProperties = SDL_PropertiesID;
 
 // objects
+using FColor = SDL_FColor;
 using Color = SDL_Color;
 using Texture = SDL_Texture*;
 using Renderer = SDL_Renderer*;

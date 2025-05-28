@@ -5,16 +5,16 @@
 
 zmain::zmain() : window(nullptr), renderer(nullptr) {}
 
-zmain::zmain(const std::string& title, int W, int H, windowFlags flags) {
-	if(createWindow(title.c_str(), W, H, flags)){
+zmain::zmain(const char* title, int W, int H, windowFlags flags) {
+	if(createWindow(title, W, H, flags)){
 		if (init()) {
 			createRenderer(window);
 		}
 	}
 }
 
-zmain::zmain(const std::string& title, int W, int H, windowFlags flags, const char* driver) {
-	if(createWindow(title.c_str(), W, H, flags)){
+zmain::zmain(const char* title, int W, int H, windowFlags flags, const char* driver) {
+	if(createWindow(title, W, H, flags)){
 		if (init()) {
 			createRenderer(window, driver);
 		}
@@ -24,7 +24,7 @@ zmain::zmain(const std::string& title, int W, int H, windowFlags flags, const ch
 bool zmain::createWindow(const char* title, int W, int H, windowFlags flags) {
     window = SDL_CreateWindow(title, W, H, flags);
     if (!window) {
-        std::cerr << "Error -> Could not create window: " << SDL_GetError() << "\n";
+        std::cerr << "Error -> zmain::createWindow() Could not create window: " << SDL_GetError() << "\n";
         return false;
     }
     return true;
@@ -33,7 +33,7 @@ bool zmain::createWindow(const char* title, int W, int H, windowFlags flags) {
 bool zmain::createRenderer(Window window, const char* driver) {
     renderer = SDL_CreateRenderer(window, driver);
     if (!renderer) {
-        std::cerr << "Error -> Could not create renderer: " << SDL_GetError() << "\n";
+        std::cerr << "Error -> zmain::createRenderer() : Could not create renderer " << SDL_GetError() << "\n";
         return false;
     }
     return true;
@@ -41,7 +41,7 @@ bool zmain::createRenderer(Window window, const char* driver) {
 
 bool zmain::init() {
     if (!SDL_Init(SDL_INIT_VIDEO)) {
-        std::cerr << "Error -> Could not initialize SDL: " << SDL_GetError() << "\n";
+        std::cerr << "Error -> zmain::init() : Could not initialize video " << SDL_GetError() << "\n";
         return false;
     }
     return true;
@@ -65,12 +65,12 @@ Renderer& zmain::getRenderer() {
 
 bool zmain::clearRender(const Color& color) {
     if (!SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a)) {
-        std::cerr << "Error -> Could not set color: " << SDL_GetError() << "\n";
+        std::cerr << "Error -> zmain::clearRender() : Could not set color: " << SDL_GetError() << "\n";
         return false;
     }
     
     if (!SDL_RenderClear(renderer)) {
-        std::cerr << "Error -> Could not render clear: " << SDL_GetError() << "\n";
+        std::cerr << "Error -> zmain::clearRender() : Could not render clear: " << SDL_GetError() << "\n";
         return false;
     }
     
@@ -88,7 +88,7 @@ bool zmain::setWindowIcon(const char* path) {
     
     SDL_Surface* icon = IMG_Load(path);
     if (!icon) {
-        std::cerr << "Error: Could not load icon: " << SDL_GetError() << "\n";
+        std::cerr << "Error -> zmain::setWindowIcon() : Could not load icon: " << SDL_GetError() << "\n";
         return false;
     }
     
@@ -99,7 +99,7 @@ bool zmain::setWindowIcon(const char* path) {
 
 bool zmain::setWindowMinSize(const int& W, const int& H){
 	if(!SDL_SetWindowMinimumSize(window, W, H)){
-		std::cerr << "Error : zmain::setWindowMinSize failed!\n";
+		std::cerr << "Error : zmain::setWindowMinSize() failed!\n";
 		return false;
 	}
 	return true;
@@ -107,7 +107,7 @@ bool zmain::setWindowMinSize(const int& W, const int& H){
 
 bool zmain::startTextInput() {
     if (!SDL_StartTextInput(window)) {
-        std::cerr << "Error: Could not start text input: " << SDL_GetError() << "\n";
+        std::cerr << "Error: zmain::startTextInput() : Could not start text input: " << SDL_GetError() << "\n";
         return false;    
     }
     return true;
@@ -115,7 +115,7 @@ bool zmain::startTextInput() {
 
 bool zmain::startTextInput(const inputProperties& props) {
     if (!SDL_StartTextInputWithProperties(window, props)) {
-        std::cerr << "Error: Could not start text input with properties: " << SDL_GetError() << "\n";
+        std::cerr << "Error: zmain::startTextInput() Could not start text input with properties: " << SDL_GetError() << "\n";
         return false;    
     }
     return true;
@@ -123,7 +123,7 @@ bool zmain::startTextInput(const inputProperties& props) {
 
 bool zmain::stopTextInput() {
     if (!SDL_StopTextInput(window)) {
-        std::cerr << "Error: Could not stop text input: " << SDL_GetError() << "\n";
+        std::cerr << "Error: zmain::stopTextInput() Could not stop text input: " << SDL_GetError() << "\n";
         return false;    
     }
     return true;

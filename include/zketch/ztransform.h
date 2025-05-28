@@ -32,7 +32,7 @@ class Transform{
 		void setScale(float& s);
 		void setScale(float nw, float nh);
 
-		const FPoint getPoint();
+		FPoint& getPoint();
 		const FBound getBound(bool RealBound = false);
-		const Anchor getAnchor() const;
+		const Anchor& getAnchor() const;
 };

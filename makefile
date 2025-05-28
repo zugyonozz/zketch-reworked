@@ -32,8 +32,7 @@ $(BIN): $(OBJECTS)
 
 # Jalankan program
 run: all
-	@./$(BIN)
-	$(MAKE) clean
+	@./$(BIN) && $(MAKE) clean
 
 # Bersihkan build
 clean:

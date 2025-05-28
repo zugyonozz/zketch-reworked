@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Fungsi untuk mengkonversi karakter hex ke nilai integer
 int hexCharToInt(char c) {
     if (c >= '0' && c <= '9')
         return c - '0';
@@ -15,14 +14,12 @@ int hexCharToInt(char c) {
     return -1; // Karakter tidak valid
 }
 
-// Fungsi untuk mengkonversi string hex ke SDL_Color
 Color Hex(const char* hex) {
-    SDL_Color color = {0, 0, 0, 255}; // Default hitam dengan alpha 255 (opaque)
-    if (hex == NULL) return color;
+    SDL_Color color = {0, 0, 0, 255};
+    if (hex == nullptr) return color;
     if (hex[0] == '#') hex++;
 
     size_t len = strlen(hex);
-    // Format yang didukung: RGB, RGBA, RRGGBB, RRGGBBAA
     if (len == 3) {
         // Format RGB
         color.r = hexCharToInt(hex[0]) * 17; // Duplikasi digit untuk mendapatkan nilai 0-255
@@ -49,6 +46,7 @@ Color Hex(const char* hex) {
     return color;
 }
 
+// Konversi Point ke FPoint
 FPoint Point2FPoint(Point& p) {
 	return FPoint{
 		(float)p.x, 
@@ -56,6 +54,7 @@ FPoint Point2FPoint(Point& p) {
 	};
 }
 
+// Konversi FPoint ke Point
 Point FPoint2Point(FPoint& p) {
 	return Point{
 		(int)p.x, 
@@ -63,6 +62,7 @@ Point FPoint2Point(FPoint& p) {
 	};
 }
 
+// Konversi Bound ke FBound
 FBound Bound2FBound(Bound& b) {
 	return FBound{
 		(float)b.x, 
@@ -72,6 +72,7 @@ FBound Bound2FBound(Bound& b) {
 	};
 }
 
+// Konversi Bound ke FBound
 Bound FBound2Bound(FBound& b) {
 	return Bound{
 		(int)b.x, 
@@ -79,6 +80,26 @@ Bound FBound2Bound(FBound& b) {
 		(int)b.w, 
 		(int)b.h
 	};
+}
+
+// Konversi Color ke FColor
+FColor Color2FColor(Color& c){
+	return { 
+		(float)c.r / 255.0f, 
+		(float)c.g / 255.0f, 
+		(float)c.b / 255.0f, 
+		(float)c.a / 255.0f 
+	}; 
+}
+
+// Konversi FColor ke Color
+Color FColor2Color(FColor& fc) {
+    return {
+        (Uint8)(fc.r * 255.0f),
+        (Uint8)(fc.g * 255.0f),
+        (Uint8)(fc.b * 255.0f),
+        (Uint8)(fc.a * 255.0f)
+    };
 }
 
 FPoint getMousePos(){

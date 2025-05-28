@@ -1,7 +1,4 @@
 #pragma once
-#include <memory>
-#include <vector>
-#include "ztype.h"
 
 class objProp;
 class zbj;

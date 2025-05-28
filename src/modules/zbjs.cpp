@@ -1,8 +1,11 @@
 // zbjs.cpp
-#include "zbjs.h"
+#include "ztype.h"
 #include "zbj.h"
-#include "utils.h"
 #include "zprop.h"
+#include <memory>
+#include <vector>
+#include "zbjs.h"
+#include "utils.h"
 #include <iostream>
 
 void zbjs::handleLine(Renderer& renderer){
@@ -113,9 +116,7 @@ zbjs::zbjs(Renderer& renderer, std::unique_ptr<objProp> props) : props(std::move
 
 zbjs::~zbjs(){
 	if(!items.empty()){
-		for(auto& i : items){
-			i->clear();
-		}
+		for(auto& i : items){ i->reset(); }
 	}
 }
 
@@ -187,9 +188,7 @@ void zbjs::removeItem(size_t id) {
 		std::cerr << "Error -> invalid id. Make sure you have a valid id.\n";
 		return;
 	}
-	if (items[id]) {
-		items[id]->clear(); // Optional, kalau kamu punya logic cleanup sendiri
-	}
+	if (items[id]) items[id]->reset();
 	items.erase(items.begin() + id); // Otomatis delete, karena unique_ptr
 }
 

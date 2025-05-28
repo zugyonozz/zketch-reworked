@@ -69,7 +69,7 @@ void Transform::setScale(float nw, float nh){
 	b.h *= nh;
 }
 
-const FPoint Transform::getPoint() {
+FPoint& Transform::getPoint() {
 	CalculateTransform();
 	return p;
 }
@@ -86,6 +86,6 @@ const FBound Transform::getBound(bool RealBound) {
 	}
 }
 
-const Anchor Transform::getAnchor() const{
+const Anchor& Transform::getAnchor() const {
 	return a;
 }

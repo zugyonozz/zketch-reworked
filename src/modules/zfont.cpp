@@ -1,6 +1,5 @@
 // zfont.cpp
 #include "zfont.h"
-#include <iostream>
 #include <utility>
 
 FontData::FontData(FontData&& other) noexcept : font(other.font), size(other.size) {

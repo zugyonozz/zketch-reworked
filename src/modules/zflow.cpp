@@ -1,7 +1,7 @@
 // zflow.cpp
-#include "zflow.h"
-#include <tuple>
 #include <utility>
+#include <tuple>
+#include "zflow.h"
 
 zFlow::zFlow(
 	const std::pair<std::function<bool()>, 
